@@ -1,0 +1,55 @@
+﻿@model List<EmployeeModel>
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<style>
+    table {
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    th, td {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    tr.warning {
+        background-color: #FFC0CB;
+    }
+</style>
+<table border="1">
+    <tr>
+        <th>Name</th>
+        <th>Total Time Worked</th>
+    </tr>
+    @foreach (var employee in Model)
+    {
+        <tr style="@(employee.TotalWorkedHours < 100 ? "background-color: #FFC0CB;" : "")">
+            <td>@(string.IsNullOrEmpty(employee.EmployeeName) ? "Unknown" : employee.EmployeeName)</td>
+            <td>@employee.TotalWorkedHours hrs</td>
+        </tr>
+    }
+</table>
+
+
+<div class="chart-container">
+    <canvas id="pieChart" width="50" height="50"></canvas>
+    <script>
+        var ctx = document.getElementById("pieChart").getContext('2d');
+        var labels = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.PieChartLabels));
+        var datasets = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(ViewBag.PieChartDatasets));
+
+        var myChart = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: labels,
+                datasets: datasets
+            }
+        });
+    </script>
+</div>
